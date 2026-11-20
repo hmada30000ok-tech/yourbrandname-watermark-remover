@@ -1,5 +1,6 @@
 import type { Locale } from '@/config/site';
 import type { Dictionary } from '@/i18n/dictionaries';
+import { ARTICLES, articlePath, getArticleContent } from '@/lib/articles';
 import { localizedPath } from '@/lib/routes';
 import SiteLayout from '@/components/SiteLayout';
 import AdSlot from '@/components/AdSlot';
@@ -81,6 +82,61 @@ export default function HomePage({ locale, dict }: Props) {
             </div>
           </div>
         </aside>
+      </section>
+
+      <section className="mx-auto mt-12 max-w-7xl px-4 sm:px-6 lg:px-8" aria-labelledby="articles-title">
+        <div className="flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <h2 id="articles-title" className="text-xl font-extrabold text-ink-900 sm:text-2xl">
+              {locale === 'ar' ? 'مقالات وأدلة تساعدك' : 'Articles and guides to help you'}
+            </h2>
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-ink-600">
+              {locale === 'ar'
+                ? 'اقرأ كيف تزيل العلامة المائية دون فقدان الجودة، وكيف يعمل مرشح delogo، وأفضل الإعدادات قبل المعالجة.'
+                : 'Read how to remove a watermark without losing quality, how the delogo filter works, and the best settings before processing.'}
+            </p>
+          </div>
+          <a
+            href={localizedPath('articles', locale)}
+            className="inline-flex items-center gap-2 rounded-xl border border-ink-300 bg-white px-5 py-2.5 text-sm font-bold text-ink-800 hover:bg-ink-50"
+          >
+            {locale === 'ar' ? 'كل المقالات' : 'All articles'}
+            <ArrowIcon className="h-4 w-4" />
+          </a>
+        </div>
+        <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {ARTICLES.map((article) => {
+            const content = getArticleContent(article, locale);
+            return (
+              <article
+                key={article.slug}
+                className="flex flex-col overflow-hidden rounded-2xl border border-ink-200 bg-white"
+              >
+                <img
+                  src={article.image.src}
+                  alt={locale === 'ar' ? article.image.altAr : article.image.altEn}
+                  width={1200}
+                  height={675}
+                  loading="lazy"
+                  className="aspect-video w-full object-cover"
+                />
+                <div className="flex flex-1 flex-col p-5">
+                  <p className="text-xs font-bold text-brand-700">
+                    {locale === 'ar'
+                      ? `${content.readingMinutes} دقائق قراءة`
+                      : `${content.readingMinutes} min read`}
+                  </p>
+                  <h3 className="mt-2 font-bold leading-6 text-ink-900">
+                    <a href={articlePath(article, locale)} className="hover:text-brand-700">
+                      {content.title}
+                    </a>
+                  </h3>
+                  <p className="mt-2 line-clamp-3 text-sm leading-6 text-ink-600">{content.excerpt}</p>
+                </div>
+              </article>
+            );
+          })}
+        </div>
       </section>
 
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
