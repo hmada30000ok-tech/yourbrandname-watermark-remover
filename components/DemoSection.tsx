@@ -2,7 +2,7 @@
 
 import type { Locale } from '@/config/site';
 import type { Dictionary } from '@/i18n/dictionaries';
-import { SAMPLE_LOAD_EVENT } from '@/lib/demo';
+import { SAMPLE_LOAD_EVENT, SAMPLE_VIDEO_URL } from '@/lib/demo';
 import { ArrowIcon } from '@/components/ui/Icons';
 
 interface Props {
@@ -11,9 +11,10 @@ interface Props {
 }
 
 /**
- * Interactive demo: real before/after stills produced by the same delogo
- * filter the tool uses, plus a button that loads the sample clip into the
- * editor (via a window event the Editor listens for) and scrolls to it.
+ * Interactive demo: the real sample clip playing on loop (muted autoplay),
+ * the after-removal still produced by the same delogo filter the tool uses,
+ * plus a button that loads the sample clip into the editor (via a window
+ * event the Editor listens for) and scrolls to it.
  */
 export default function DemoSection({ locale, dict }: Props) {
   const handleTry = () => {
@@ -33,16 +34,18 @@ export default function DemoSection({ locale, dict }: Props) {
 
       <div className="mt-5 grid gap-4 sm:grid-cols-2">
         <figure className="overflow-hidden rounded-2xl border border-ink-200 bg-white">
-          <img
-            src="/images/demo/before.jpg"
-            alt={
+          <video
+            src={SAMPLE_VIDEO_URL}
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="auto"
+            aria-label={
               locale === 'ar'
-                ? 'إطار من الفيديو التجريبي قبل الإزالة وتظهر فيه العلامة المائية SAMPLE'
-                : 'Frame from the sample video before removal, showing the SAMPLE watermark'
+                ? 'الفيديو التجريبي يشتغل تلقائياً وتظهر فيه العلامة المائية SAMPLE'
+                : 'The sample video plays automatically, showing the SAMPLE watermark'
             }
-            width={640}
-            height={360}
-            loading="lazy"
             className="aspect-video w-full object-cover"
           />
           <figcaption className="flex items-center justify-between px-4 py-3">
