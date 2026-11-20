@@ -16,8 +16,8 @@ export const SITE_NAME = 'Unmark';
 /** Live production domain on Railway. */
 export const SITE_URL = 'https://yourbrandname-watermark-remover-production.up.railway.app';
 
-/** PLACEHOLDER: replace with your real contact email. */
-export const CONTACT_EMAIL = 'you@example.com';
+/** Contact email shown on the site. */
+export const CONTACT_EMAIL = 'xdalfe@gmail.com';
 
 export type Locale = 'ar' | 'en';
 
