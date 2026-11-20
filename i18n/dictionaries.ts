@@ -149,7 +149,7 @@ export const ar = {
     demoBefore: 'قبل',
     demoAfter: 'بعد',
     demoCta: 'جرّب الفيديو التجريبي في المحرر',
-    demoNote: 'الفيديو على اليمين يشتغل تلقائياً وهو الفيديو الأصلي قبل الإزالة، والصورة على الشمال بعد تطبيق مرشح delogo بنفس إعدادات الأداة.',
+    demoNote: 'الفيديو على اليمين يشتغل تلقائياً: شوف الماوس بيتحرك لحد العلامة المائية SAMPLE، بيحدد عليها بمستطيل أحمر وبعدين بيدوس عليها فتختفي من الفيديو. والصورة على الشمال هي النتيجة النهائية بعد الإزالة.',
     faqTitle: 'أسئلة شائعة',
     faq: [
       {
@@ -646,7 +646,7 @@ export const en: Dictionary = {
     demoBefore: 'Before',
     demoAfter: 'After',
     demoCta: 'Try the sample video in the editor',
-    demoNote: 'The video on the right plays automatically — it is the original clip before removal. The picture on the left is after applying the delogo filter with the same settings the tool uses.',
+    demoNote: 'The video on the right plays automatically: watch the mouse move to the SAMPLE watermark, draw a red rectangle around it and click it — the watermark disappears from the video. The picture on the left is the final result after removal.',
     faqTitle: 'Frequently asked questions',
     faq: [
       {
