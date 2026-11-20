@@ -1,7 +1,8 @@
 import type { Rect } from '@/lib/coordinates';
 
 /**
- * Built-in sample clip for the homepage demo: a 640x360, 6-second video
+ * Built-in sample clip for the homepage demo: real Times Square street
+ * footage (Pexels, Joseph Eulo, free license), 640x360, 6 seconds,
  * with a "SAMPLE" watermark box drawn into the top-right corner.
  * The watermark position is fixed and known, so the editor can pre-draw
  * the selection rectangle for it.
