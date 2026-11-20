@@ -149,7 +149,7 @@ export const ar = {
     demoBefore: 'قبل',
     demoAfter: 'بعد',
     demoCta: 'جرّب الفيديو التجريبي في المحرر',
-    demoNote: 'الصورتان من إخراج الأداة نفسها: الإطار الأول من الفيديو الأصلي، والإطار الثاني بعد تطبيق مرشح delogo بنفس إعدادات الأداة.',
+    demoNote: 'الفيديو على اليمين يشتغل تلقائياً وهو الفيديو الأصلي قبل الإزالة، والصورة على الشمال بعد تطبيق مرشح delogo بنفس إعدادات الأداة.',
     faqTitle: 'أسئلة شائعة',
     faq: [
       {
@@ -646,7 +646,7 @@ export const en: Dictionary = {
     demoBefore: 'Before',
     demoAfter: 'After',
     demoCta: 'Try the sample video in the editor',
-    demoNote: 'Both stills come from the tool itself: the first frame is from the original video, the second is after applying the delogo filter with the same settings the tool uses.',
+    demoNote: 'The video on the right plays automatically — it is the original clip before removal. The picture on the left is after applying the delogo filter with the same settings the tool uses.',
     faqTitle: 'Frequently asked questions',
     faq: [
       {
