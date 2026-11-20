@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, type PointerEvent, type RefObject } from 'react';
+import { useEffect, useRef, useState, type PointerEvent, type RefObject } from 'react';
 import type { Dictionary } from '@/i18n/dictionaries';
 import {
   clampRect,
@@ -76,6 +76,31 @@ export default function WatermarkSelector({
   const interaction = useRef<Interaction | null>(null);
   const rectRef = useRef<Rect | null>(rect);
   const box = useElementSize(containerRef);
+  // Default is play mode: the video controls (play, seek, fullscreen)
+  // work normally. Drawing only starts after the user explicitly
+  // presses "Select watermark", so the draw cursor does not appear
+  // immediately on upload and does not block the video controls.
+  const [selecting, setSelecting] = useState(false);
+
+  const enterSelectMode = () => {
+    videoRef.current?.pause();
+    setSelecting(true);
+  };
+
+  const toggleFullscreen = async () => {
+    const element = containerRef.current;
+    if (!element) return;
+    try {
+      if (document.fullscreenElement) {
+        await document.exitFullscreen();
+      } else {
+        await element.requestFullscreen();
+      }
+    } catch {
+      // Fullscreen is unavailable in this browser; the native video
+      // controls still offer it. Ignore the failure silently.
+    }
+  };
 
   useEffect(() => {
     rectRef.current = rect;
@@ -92,6 +117,7 @@ export default function WatermarkSelector({
   };
 
   const begin = (event: PointerEvent, mode: Mode, handle?: Handle) => {
+    if (!selecting) return;
     event.preventDefault();
     event.stopPropagation();
     overlayRef.current?.setPointerCapture(event.pointerId);
@@ -169,6 +195,40 @@ export default function WatermarkSelector({
 
   return (
     <div>
+      <div className="mb-3 flex flex-wrap items-center gap-2">
+        <button
+          type="button"
+          onClick={() => setSelecting(false)}
+          aria-pressed={!selecting}
+          className={`rounded-lg px-3 py-1.5 text-xs font-semibold ${
+            !selecting
+              ? 'bg-brand-600 text-white'
+              : 'border border-ink-200 bg-white text-ink-700 hover:bg-ink-50'
+          }`}
+        >
+          {dict.editor.preview.playMode}
+        </button>
+        <button
+          type="button"
+          onClick={enterSelectMode}
+          aria-pressed={selecting}
+          className={`rounded-lg px-3 py-1.5 text-xs font-semibold ${
+            selecting
+              ? 'bg-brand-600 text-white'
+              : 'border border-ink-200 bg-white text-ink-700 hover:bg-ink-50'
+          }`}
+        >
+          {dict.editor.preview.selectMode}
+        </button>
+        <button
+          type="button"
+          onClick={toggleFullscreen}
+          className="rounded-lg border border-ink-200 bg-white px-3 py-1.5 text-xs font-semibold text-ink-700 hover:bg-ink-50"
+        >
+          {dict.editor.preview.fullscreen}
+        </button>
+      </div>
+
       <div
         ref={containerRef}
         className="relative w-full overflow-hidden rounded-xl border border-ink-900 bg-black"
@@ -197,8 +257,10 @@ export default function WatermarkSelector({
 
         <div
           ref={overlayRef}
-          className="absolute inset-0 touch-none"
-          style={{ cursor: 'crosshair' }}
+          className={`absolute inset-0 touch-none ${
+            selecting ? '' : 'pointer-events-none'
+          }`}
+          style={{ cursor: selecting ? 'crosshair' : 'default' }}
           onPointerDown={(event) => begin(event, 'draw')}
           onPointerMove={move}
           onPointerUp={end}
@@ -228,7 +290,9 @@ export default function WatermarkSelector({
       </div>
 
       <div className="mt-3 flex flex-wrap items-center justify-between gap-2 text-sm">
-        <p className="text-ink-600">{dict.editor.preview.hint}</p>
+        <p className="text-ink-600">
+          {selecting ? dict.editor.preview.hint : dict.editor.preview.playHint}
+        </p>
         {rect && rect.w > 0 && rect.h > 0 ? (
           <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
             <CheckIcon className="h-4 w-4" />
