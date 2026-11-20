@@ -191,6 +191,13 @@ export default function Editor({ dict }: Props) {
     if (pendingSampleRect.current) {
       setRect(pendingSampleRect.current);
       pendingSampleRect.current = null;
+      // The sample clip starts playing by itself so the visitor sees it
+      // moving right away (muted autoplay is what browsers allow).
+      const element = videoRef.current;
+      if (element) {
+        element.muted = true;
+        void element.play().catch(() => {});
+      }
     }
   };
 
