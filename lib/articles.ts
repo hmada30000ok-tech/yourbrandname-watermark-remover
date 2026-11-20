@@ -358,7 +358,7 @@ export const ARTICLES: Article[] = [
         {
           heading: 'قائمة تحقق سريعة قبل أن ترفع الفيديو',
           paragraphs: [
-            'قبل أن ترفع الفيديو، تأكد من ثلاث نقاط: أولاً، أن الصيغة مدعومة، وأن الملف ليس تالفاً ويعمل في مشغّل الفيديو على جهازك. ثانياً، أن حجم الملف أقل من 150 ميجابايت، وهو الحد الأقصى للأداة، وأن المدة معقولة، لأن الملفات الطويلة جداً تستهلك ذاكرة كبيرة وقد تفشل على الهاتف. ثالثاً، أن لديك نسخة احتياطية من الملف الأصلي في مكان آمن، حتى إذا حدث خطأ أثناء المعالجة.',
+            'قبل أن ترفع الفيديو، تأكد من ثلاث نقاط: أولاً، أن الصيغة مدعومة، وأن الملف ليس تالفاً ويعمل في مشغّل الفيديو على جهازك. ثانياً، أن حجم الملف أقل من 400 ميجابايت، وهو الحد الأقصى للأداة، وأن المدة معقولة، لأن الملفات الطويلة جداً تستهلك ذاكرة كبيرة وقد تفشل على الهاتف. ثالثاً، أن لديك نسخة احتياطية من الملف الأصلي في مكان آمن، حتى إذا حدث خطأ أثناء المعالجة.',
             'إذا كان الملف كبيراً جداً، فكّر في قصه إلى الجزء الذي تظهر فيه العلامة فقط، أو في تصدير نسخة أقصر من برنامج المونتاج قبل الرفع. وإذا كان الملف بصيغة غير مدعومة، حوّله إلى MP4 باستخدام برنامج موثوق، واختر إعداد جودة عالية أثناء التحويل، حتى لا تخسر الكثير من التفاصيل قبل أن تبدأ. هذه الخطوات التحضيرية القصيرة هي الفرق بين نتيجة نظيفة ونتيجة مخيبة.',
           ],
         },
@@ -374,7 +374,7 @@ export const ARTICLES: Article[] = [
         },
         {
           q: 'لماذا يفشل رفع بعض الملفات الكبيرة؟',
-          a: 'لأن المعالجة تتم داخل المتصفح، والذاكرة المتاحة محدودة، خاصة على الهاتف. الحد الأقصى هو 150 ميجابايت، والملفات الأكبر من 100 ميجابايت تحتاج إلى تأكيد صريح. جرّب مقطعاً أقصر أو ملفاً أصغر إذا واجهت مشكلة.',
+          a: 'لأن المعالجة تتم داخل المتصفح، والذاكرة المتاحة محدودة، خاصة على الهاتف. الحد الأقصى هو 400 ميجابايت، والملفات الأكبر من 100 ميجابايت تحتاج إلى تأكيد صريح. جرّب مقطعاً أقصر أو ملفاً أصغر إذا واجهت مشكلة.',
         },
       ],
       ctaTitle: 'جهّز فيديوك وابدأ الإزالة',
@@ -417,7 +417,7 @@ export const ARTICLES: Article[] = [
         {
           heading: 'A quick checklist before you upload',
           paragraphs: [
-            'Before you upload the video, check three things. First, that the format is supported, and that the file is not damaged and plays in a video player on your device. Second, that the file size is below 150 MB, which is the limit of the tool, and that the duration is reasonable, because very long files use a lot of memory and may fail on a phone. Third, that you have a backup copy of the original file in a safe place, in case something goes wrong during processing.',
+            'Before you upload the video, check three things. First, that the format is supported, and that the file is not damaged and plays in a video player on your device. Second, that the file size is below 400 MB, which is the limit of the tool, and that the duration is reasonable, because very long files use a lot of memory and may fail on a phone. Third, that you have a backup copy of the original file in a safe place, in case something goes wrong during processing.',
             'If the file is very large, consider trimming it to the part where the watermark appears, or exporting a shorter version from your editing software before upload. If the file is in an unsupported format, convert it to MP4 using trusted software, and choose a high quality setting during the conversion, so you do not lose much detail before you start. These short preparation steps are the difference between a clean result and a disappointing one.',
           ],
         },
@@ -433,7 +433,7 @@ export const ARTICLES: Article[] = [
         },
         {
           q: 'Why do some large files fail to upload?',
-          a: 'Because processing happens inside the browser, and the available memory is limited, especially on a phone. The maximum is 150 MB, and files over 100 MB need explicit confirmation. Try a shorter clip or a smaller file if you run into a problem.',
+          a: 'Because processing happens inside the browser, and the available memory is limited, especially on a phone. The maximum is 400 MB, and files over 100 MB need explicit confirmation. Try a shorter clip or a smaller file if you run into a problem.',
         },
       ],
       ctaTitle: 'Prepare your video and start the removal',
@@ -850,7 +850,7 @@ export const ARTICLES: Article[] = [
           heading: 'جهّز المقطع قبل أن تبدأ',
           paragraphs: [
             'أهم خطوة على الهاتف هي تقصير المقطع قبل المعالجة. فإذا كانت العلامة تظهر في أول دقيقة من فيديو مدته عشر دقائق، فقصّ المقطع إلى الدقيقة المطلوبة من معرض هاتفك أو من تطبيق مونتاج مجاني قبل الرفع. هذا يقلل حجم الملف ووقت المعالجة والذاكرة المطلوبة بشكل كبير.',
-            'وتأكد أيضاً من أن حجم الملف أقل من 150 ميجابايت، ويفضل أن يكون أقل من 100 ميجابايت على الهاتف، لأن الملفات الأكبر من ذلك تحتاج إلى تأكيد صريح وقد تكون بطيئة. وأغلق التطبيقات الأخرى أثناء المعالجة، وتأكد من أن بطارية هاتفك مشحونة، لأن المعالجة تستهلك طاقة وذاكرة.',
+            'وتأكد أيضاً من أن حجم الملف أقل من 400 ميجابايت، ويفضل أن يكون أقل من 100 ميجابايت على الهاتف، لأن الملفات الأكبر من ذلك تحتاج إلى تأكيد صريح وقد تكون بطيئة. وأغلق التطبيقات الأخرى أثناء المعالجة، وتأكد من أن بطارية هاتفك مشحونة، لأن المعالجة تستهلك طاقة وذاكرة.',
           ],
         },
         {
@@ -909,7 +909,7 @@ export const ARTICLES: Article[] = [
           heading: 'Prepare the clip before you start',
           paragraphs: [
             'The most important step on a phone is to shorten the clip before processing. If the watermark appears in the first minute of a ten-minute video, trim the clip to that minute from your phone gallery or a free editing app before uploading. That cuts the file size, the processing time, and the memory needed by a large amount.',
-            'Also make sure the file is below 150 MB, and preferably below 100 MB on a phone, because larger files need explicit confirmation and may be slow. Close other apps while processing, and make sure your phone battery is charged, because processing uses power and memory.',
+            'Also make sure the file is below 400 MB, and preferably below 100 MB on a phone, because larger files need explicit confirmation and may be slow. Close other apps while processing, and make sure your phone battery is charged, because processing uses power and memory.',
           ],
         },
         {
