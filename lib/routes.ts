@@ -1,10 +1,11 @@
 import type { Locale } from '@/config/site';
 
-export type PageKey = 'home' | 'howItWorks' | 'terms' | 'privacy' | 'contact' | 'about';
+export type PageKey = 'home' | 'howItWorks' | 'articles' | 'terms' | 'privacy' | 'contact' | 'about';
 
 export const ROUTES: Record<PageKey, Record<Locale, string>> = {
   home: { ar: '/', en: '/en' },
   howItWorks: { ar: '/how-it-works', en: '/en/how-it-works' },
+  articles: { ar: '/articles', en: '/en/articles' },
   terms: { ar: '/terms', en: '/en/terms' },
   privacy: { ar: '/privacy', en: '/en/privacy' },
   contact: { ar: '/contact', en: '/en/contact' },
@@ -24,9 +25,13 @@ export function pageFromPathname(pathname: string): PageKey {
   const clean = pathname.replace(/\/+$/, '') || '/';
   const withoutEn = clean.startsWith('/en') ? clean.slice(3) || '/' : clean;
 
+  if (withoutEn.startsWith('/articles/')) return 'articles';
+
   switch (withoutEn) {
     case '/how-it-works':
       return 'howItWorks';
+    case '/articles':
+      return 'articles';
     case '/terms':
       return 'terms';
     case '/privacy':

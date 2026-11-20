@@ -5,7 +5,9 @@ import { localizedPath, type PageKey } from '@/lib/routes';
 
 const baseUrl = SITE_URL.replace(/\/$/, '');
 
-export function createPageMetadata(locale: Locale, page: PageKey): Metadata {
+// 'articles' has its own per-article metadata (see app/**/articles/**/page.tsx)
+// and is not in dict.meta, so it is excluded from this helper's page type.
+export function createPageMetadata(locale: Locale, page: Exclude<PageKey, 'articles'>): Metadata {
   const dict = getDictionary(locale)[`meta`][page];
   const path = localizedPath(page, locale);
   const url = `${baseUrl}${path}`;
