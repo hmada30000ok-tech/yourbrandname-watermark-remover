@@ -10,8 +10,8 @@
  * ---------------------------------------------------------------------------
  */
 
-/** PLACEHOLDER: replace with your real brand name. */
-export const SITE_NAME = '[YourBrandName]';
+/** Brand name shown across the site. */
+export const SITE_NAME = 'Unmark';
 
 /** Live production domain on Railway. */
 export const SITE_URL = 'https://yourbrandname-watermark-remover-production.up.railway.app';
