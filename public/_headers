@@ -1,0 +1,13 @@
+# NOTE: COOP / COEP headers are intentionally NOT set here.
+#
+# `Cross-Origin-Embedder-Policy: require-corp` enables SharedArrayBuffer
+# (multithreaded ffmpeg) but blocks Google AdSense scripts, ad iframes and
+# creatives, because Google does not send the required CORP header.
+#
+# With these headers absent, AdSense loads normally and the app falls back to
+# the single-threaded ffmpeg core automatically. Add the two headers back only
+# if you decide to disable ads and want faster multithreaded processing.
+#
+# Optional performance headers that are safe with ads:
+# /*
+#   Cache-Control: public, max-age=0, must-revalidate

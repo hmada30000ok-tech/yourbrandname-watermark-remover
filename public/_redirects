@@ -1,0 +1,5 @@
+# Locale routing is implemented with static paths:
+#   /   -> Arabic (default)
+#   /en -> English
+# No runtime redirect rules are required for this static export.
+# The file is kept so Cloudflare Pages deployments stay explicit.
