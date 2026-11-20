@@ -79,7 +79,7 @@ export const ar = {
       'بلا تسجيل',
       'مجاني',
       'MP4 وMOV وWEBM',
-      'حتى 150 ميجابايت',
+      'حتى 400 ميجابايت',
     ],
     howTitle: 'ثلاث خطوات بسيطة',
     howText: 'ارفع الفيديو، ارسم المستطيل حول العلامة، ثم اضغط معالجة. يمكنك معاينة النتيجة وتنزيلها فورًا بصيغة MP4.',
@@ -166,7 +166,7 @@ export const ar = {
       },
       {
         q: 'ما الحد الأقصى لحجم الملف؟',
-        a: 'الحد الأقصى هو 150 ميجابايت لكل ملف، وهو أكبر بكثير من الحد المجاني البالغ 20 ميجابايت في أداة Apowersoft على الإنترنت. الملفات الأكبر من 100 ميجابايت تحتاج إلى تأكيد صريح، وقد تكون بطيئة على الهاتف بسبب محدودية الذاكرة.',
+        a: 'الحد الأقصى هو 400 ميجابايت لكل ملف، وهو أكبر بكثير من الحد المجاني البالغ 20 ميجابايت في أداة Apowersoft على الإنترنت. الملفات الأكبر من 100 ميجابايت تحتاج إلى تأكيد صريح، وقد تكون بطيئة على الهاتف بسبب محدودية الذاكرة.',
       },
       {
         q: 'هل تعمل الأداة على الهاتف؟',
@@ -207,7 +207,7 @@ export const ar = {
       title: 'اسحب الفيديو هنا',
       hint: 'أو اضغط لاختيار ملف من جهازك',
       browse: 'اختيار ملف',
-      badges: ['MP4', 'MOV', 'WEBM', 'حتى 150 ميجابايت', 'معالجة محلية — بلا رفع'],
+      badges: ['MP4', 'MOV', 'WEBM', 'حتى 400 ميجابايت', 'معالجة محلية — بلا رفع'],
       change: 'تغيير الفيديو',
       selected: 'الملف المحدد',
       size: 'الحجم',
@@ -221,7 +221,7 @@ export const ar = {
     },
     validation: {
       unsupported: 'صيغة الملف غير مدعومة. يرجى استخدام MP4 أو MOV أو WEBM.',
-      tooLarge: 'حجم الملف أكبر من الحد المسموح (150 ميجابايت). جرّب ملفًا أصغر أو مقطعًا أقصر.',
+      tooLarge: 'حجم الملف أكبر من الحد المسموح (400 ميجابايت). جرّب ملفًا أصغر أو مقطعًا أقصر.',
       empty: 'لم يتم اختيار أي ملف.',
     },
     preview: {
@@ -355,7 +355,7 @@ export const ar = {
     faqTitle: 'الأسئلة الشائعة',
     faq: [
       { q: 'هل تُرفع مقاطع الفيديو إلى خادم؟', a: 'لا. تتم المعالجة بالكامل داخل متصفحك باستخدام ffmpeg.wasm. لا يوجد أي خادم يستقبل ملفاتك.' },
-      { q: 'ما الصيغ المدعومة؟', a: 'تدعم الأداة ملفات MP4 وMOV وWEBM حتى 150 ميجابايت. الناتج دائمًا ملف MP4.' },
+      { q: 'ما الصيغ المدعومة؟', a: 'تدعم الأداة ملفات MP4 وMOV وWEBM حتى 400 ميجابايت. الناتج دائمًا ملف MP4.' },
       { q: 'هل تختفي العلامة المائية تمامًا في كل الحالات؟', a: 'ليس دائمًا. تعمل الطريقة بشكل أفضل مع العلامات الثابتة على خلفيات بسيطة. العلامات المتحركة أو تلك التي تغطي تفاصيل مهمة قد تترك أثرًا طفيفًا.' },
       { q: 'لماذا المعالجة بطيئة على هاتفي؟', a: 'إزالة العلامة تتطلب إعادة ترميز الفيديو. على الهاتف، الذاكرة محدودة وقد تضطر الأداة لاستخدام النواة الأحادية. جرّب مقطعًا أقصر أو ملفًا أصغر.' },
       { q: 'هل يمكنني استخدام الأداة على محتوى لا أملكه؟', a: 'لا. يجب أن تملك المحتوى أو أن يكون لديك حقوق واضحة لتعديله. راجع شروط الاستخدام.' },
@@ -580,7 +580,7 @@ export const en: Dictionary = {
       'No sign-up',
       'Free',
       'MP4, MOV and WEBM',
-      'Up to 150 MB',
+      'Up to 400 MB',
     ],
     howTitle: 'Three simple steps',
     howText: 'Upload a video, draw the rectangle over the watermark, then press Process. Preview the result and download it as an MP4 right away.',
@@ -667,7 +667,7 @@ export const en: Dictionary = {
       },
       {
         q: 'What is the maximum file size?',
-        a: 'The maximum is 150 MB per file, which is far larger than the 20 MB free limit of Apowersoft’s online remover. Files over 100 MB need explicit confirmation, and they may be slow on a phone because of limited memory.',
+        a: 'The maximum is 400 MB per file, which is far larger than the 20 MB free limit of Apowersoft’s online remover. Files over 100 MB need explicit confirmation, and they may be slow on a phone because of limited memory.',
       },
       {
         q: 'Does the tool work on a phone?',
@@ -708,7 +708,7 @@ export const en: Dictionary = {
       title: 'Drop your video here',
       hint: 'or press to choose a file from your device',
       browse: 'Choose a file',
-      badges: ['MP4', 'MOV', 'WEBM', 'Up to 150 MB', 'Local processing — no upload'],
+      badges: ['MP4', 'MOV', 'WEBM', 'Up to 400 MB', 'Local processing — no upload'],
       change: 'Change video',
       selected: 'Selected file',
       size: 'Size',
@@ -722,7 +722,7 @@ export const en: Dictionary = {
     },
     validation: {
       unsupported: 'Unsupported file format. Please use MP4, MOV or WEBM.',
-      tooLarge: 'The file is larger than the allowed limit (150 MB). Try a smaller file or a shorter clip.',
+      tooLarge: 'The file is larger than the allowed limit (400 MB). Try a smaller file or a shorter clip.',
       empty: 'No file was selected.',
     },
     preview: {
@@ -856,7 +856,7 @@ export const en: Dictionary = {
     faqTitle: 'Frequently asked questions',
     faq: [
       { q: 'Are my videos uploaded to a server?', a: 'No. Everything runs in your browser with ffmpeg.wasm. No server ever receives your files.' },
-      { q: 'Which formats are supported?', a: 'MP4, MOV and WEBM files up to 150 MB. The output is always an MP4 file.' },
+      { q: 'Which formats are supported?', a: 'MP4, MOV and WEBM files up to 400 MB. The output is always an MP4 file.' },
       { q: 'Will the watermark always disappear completely?', a: 'Not always. It works best with static marks on simple backgrounds. Moving marks or marks covering important detail may leave a faint trace.' },
       { q: 'Why is processing slow on my phone?', a: 'Removing a mark requires re-encoding video. On a phone, memory is limited and the tool may need the single-threaded core. Try a shorter clip or a smaller file.' },
       { q: 'Can I use the tool on content I do not own?', a: 'No. You must own the content or have clear rights to modify it. See the Terms of Use.' },
