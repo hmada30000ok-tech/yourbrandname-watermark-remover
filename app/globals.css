@@ -1,0 +1,28 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-white text-ink-900 antialiased;
+  font-family: 'Segoe UI', Tahoma, 'Noto Sans Arabic', 'Helvetica Neue', Arial, sans-serif;
+}
+
+:focus-visible {
+  outline-offset: 2px;
+}
+
+[dir='rtl'] .ltr-only {
+  display: none;
+}
+
+::selection {
+  @apply bg-brand-200 text-brand-900;
+}
