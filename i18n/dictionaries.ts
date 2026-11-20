@@ -124,6 +124,10 @@ export const ar = {
       h: 'الارتفاع',
       noRect: 'لم تحدد أي منطقة بعد.',
       ready: 'تم تحديد المنطقة',
+      playMode: 'تشغيل الفيديو',
+      selectMode: 'تحديد العلامة',
+      fullscreen: 'ملء الشاشة',
+      playHint: 'شغّل الفيديو وكبّره عشان تلاقي العلامة المائية، وبعدين دوس "تحديد العلامة" وارسم المستطيل.',
     },
     time: {
       title: 'النطاق الزمني للتطبيق',
@@ -506,6 +510,10 @@ export const en: Dictionary = {
       h: 'Height',
       noRect: 'No area selected yet.',
       ready: 'Area selected',
+      playMode: 'Play video',
+      selectMode: 'Select watermark',
+      fullscreen: 'Fullscreen',
+      playHint: 'Play and enlarge the video to find the watermark, then press "Select watermark" and draw the rectangle.',
     },
     time: {
       title: 'Time range to apply',
