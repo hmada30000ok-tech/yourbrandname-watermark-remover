@@ -12,7 +12,7 @@ const base: DelogoOptions = {
   outputName: 'output.mp4',
   videoWidth: 1920,
   videoHeight: 1080,
-  rect: { x: 10, y: 20, w: 100, h: 40 },
+  rects: [{ x: 10, y: 20, w: 100, h: 40 }],
   startTime: 0,
   endTime: 5,
 };
@@ -96,7 +96,7 @@ describe('buildDelogoArgs', () => {
   it('clamps out-of-bounds rectangles and integerises the filter values', () => {
     const args = buildDelogoArgs({
       ...base,
-      rect: { x: 1910.4, y: 1070.8, w: 80, h: 80 },
+      rects: [{ x: 1910.4, y: 1070.8, w: 80, h: 80 }],
     });
     expect(args[3]).toBe(
       "delogo=x=1910:y=1071:w=10:h=9:enable='between(t,0,5)':show=0",
@@ -119,6 +119,26 @@ describe('buildDelogoArgs', () => {
     expect(args).toContain('copy');
     expect(args[args.indexOf('-c:a') + 1]).toBe('copy');
     expect(args[args.indexOf('-crf') + 1]).toBe('23');
+  });
+
+  it('chains one delogo filter per rectangle so several watermarks are removed in one pass', () => {
+    const args = buildDelogoArgs({
+      ...base,
+      rects: [
+        { x: 10, y: 20, w: 100, h: 40 },
+        { x: 300, y: 400, w: 80, h: 30 },
+      ],
+    });
+    expect(args[3]).toBe(
+      "delogo=x=10:y=20:w=100:h=40:enable='between(t,0,5)':show=0," +
+        "delogo=x=300:y=400:w=80:h=30:enable='between(t,0,5)':show=0",
+    );
+  });
+
+  it('requires at least one rectangle', () => {
+    expect(() => buildDelogoArgs({ ...base, rects: [] })).toThrow(
+      'at least one rectangle',
+    );
   });
 
   it('contains exactly one filter argument and one output argument', () => {
