@@ -53,8 +53,15 @@ export function normalizeDelogoRect(rect: Rect, videoWidth: number, videoHeight:
  * Build the ffmpeg command as an argument ARRAY — never a shell string.
  * Example output:
  *   ["-i","input.mp4","-vf","delogo=x=10:y=20:w=100:h=40:enable='between(t,0,5)':show=0",
- *    "-c:v","libx264","-preset","veryfast","-crf","23","-c:a","copy",
+ *    "-c:v","libx264","-preset","ultrafast","-crf","23","-c:a","copy",
  *    "-movflags","+faststart","output.mp4"]
+ *
+ * The preset is "ultrafast" on purpose: encoding runs in the browser on one
+ * core (the site deliberately has no COOP/COEP headers so Google AdSense
+ * keeps working, which also means no SharedArrayBuffer / multi-thread
+ * ffmpeg). Ultrafast is the fastest x264 preset — roughly 1.5-2x quicker
+ * than "veryfast" — at the cost of a slightly larger output file. The
+ * watermark removal itself (delogo) is unchanged.
  */
 export function buildDelogoArgs(options: DelogoOptions): string[] {
   const {
@@ -89,7 +96,7 @@ export function buildDelogoArgs(options: DelogoOptions): string[] {
     '-c:v',
     'libx264',
     '-preset',
-    'veryfast',
+    'ultrafast',
     '-crf',
     '23',
     '-pix_fmt',
