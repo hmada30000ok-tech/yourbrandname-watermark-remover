@@ -23,13 +23,17 @@ interface Interaction {
   handle?: Handle;
   anchor: Point;
   initial: Rect;
+  /** Index of the rectangle this interaction edits (draft index while drawing). */
+  index: number;
 }
 
 interface Props {
   videoUrl: string;
   videoSize: Size;
-  rect: Rect | null;
-  onRectChange: (rect: Rect | null) => void;
+  rects: Rect[];
+  onRectsChange: (rects: Rect[]) => void;
+  selectedIndex: number | null;
+  onSelectedIndexChange: (index: number | null) => void;
   videoRef: RefObject<HTMLVideoElement>;
   onTimeUpdate: (time: number) => void;
   onMetadata: (size: Size, duration: number) => void;
@@ -61,11 +65,22 @@ function applyHandle(initial: Rect, handle: Handle, point: Point): Rect {
   return rectFromPoints({ x: left, y: top }, { x: right, y: bottom });
 }
 
+function pointInRect(point: Point, rect: Rect): boolean {
+  return (
+    point.x >= rect.x &&
+    point.x <= rect.x + rect.w &&
+    point.y >= rect.y &&
+    point.y <= rect.y + rect.h
+  );
+}
+
 export default function WatermarkSelector({
   videoUrl,
   videoSize,
-  rect,
-  onRectChange,
+  rects,
+  onRectsChange,
+  selectedIndex,
+  onSelectedIndexChange,
   videoRef,
   onTimeUpdate,
   onMetadata,
@@ -74,7 +89,7 @@ export default function WatermarkSelector({
   const containerRef = useRef<HTMLDivElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
   const interaction = useRef<Interaction | null>(null);
-  const rectRef = useRef<Rect | null>(rect);
+  const rectsRef = useRef<Rect[]>(rects);
   const box = useElementSize(containerRef);
   // Default is play mode: the video controls (play, seek, fullscreen)
   // work normally. Drawing only starts after the user explicitly
@@ -103,8 +118,8 @@ export default function WatermarkSelector({
   };
 
   useEffect(() => {
-    rectRef.current = rect;
-  }, [rect]);
+    rectsRef.current = rects;
+  }, [rects]);
 
   const pointFromEvent = (event: PointerEvent): Point => {
     const bounds = containerRef.current?.getBoundingClientRect();
@@ -116,22 +131,58 @@ export default function WatermarkSelector({
     );
   };
 
-  const begin = (event: PointerEvent, mode: Mode, handle?: Handle) => {
+  /** Topmost rectangle containing the point (later rectangles are on top). */
+  const hitTest = (point: Point): number => {
+    const list = rectsRef.current;
+    for (let i = list.length - 1; i >= 0; i -= 1) {
+      if (pointInRect(point, list[i])) return i;
+    }
+    return -1;
+  };
+
+  const replaceRect = (index: number, rect: Rect) => {
+    const next = [...rectsRef.current];
+    if (index < 0 || index >= next.length) return;
+    next[index] = rect;
+    onRectsChange(next);
+  };
+
+  const begin = (event: PointerEvent, mode: Mode, index: number, handle?: Handle) => {
     if (!selecting) return;
     event.preventDefault();
     event.stopPropagation();
     overlayRef.current?.setPointerCapture(event.pointerId);
 
     const point = pointFromEvent(event);
-    interaction.current = {
-      mode,
-      handle,
-      anchor: point,
-      initial: rectRef.current ?? ZERO_RECT,
-    };
+    const list = rectsRef.current;
 
     if (mode === 'draw') {
-      onRectChange({ x: point.x, y: point.y, w: 0, h: 0 });
+      // A fresh draft rectangle appended at the end of the list.
+      interaction.current = {
+        mode,
+        anchor: point,
+        initial: ZERO_RECT,
+        index: list.length,
+      };
+      onRectsChange([...list, { x: point.x, y: point.y, w: 0, h: 0 }]);
+      onSelectedIndexChange(list.length);
+      return;
+    }
+
+    const initial = list[index] ?? ZERO_RECT;
+    interaction.current = { mode, handle, anchor: point, initial, index };
+    onSelectedIndexChange(index);
+  };
+
+  /** Pointer down on the overlay: move an existing rectangle, or draw a new one. */
+  const handleOverlayPointerDown = (event: PointerEvent) => {
+    if (!selecting) return;
+    const point = pointFromEvent(event);
+    const hit = hitTest(point);
+    if (hit >= 0) {
+      begin(event, 'move', hit);
+    } else {
+      begin(event, 'draw', rectsRef.current.length);
     }
   };
 
@@ -143,11 +194,11 @@ export default function WatermarkSelector({
     const point = pointFromEvent(event);
 
     if (current.mode === 'draw') {
-      onRectChange(rectFromPoints(current.anchor, point));
+      replaceRect(current.index, rectFromPoints(current.anchor, point));
     } else if (current.mode === 'resize' && current.handle) {
-      onRectChange(applyHandle(current.initial, current.handle, point));
+      replaceRect(current.index, applyHandle(current.initial, current.handle, point));
     } else if (current.mode === 'move') {
-      onRectChange({
+      replaceRect(current.index, {
         x: current.initial.x + (point.x - current.anchor.x),
         y: current.initial.y + (point.y - current.anchor.y),
         w: current.initial.w,
@@ -164,34 +215,43 @@ export default function WatermarkSelector({
       overlayRef.current.releasePointerCapture(event.pointerId);
     }
 
-    if (current?.mode === 'draw') {
-      const drawn = rectRef.current;
+    if (!current) return;
+
+    const list = rectsRef.current;
+    if (current.mode === 'draw') {
+      const drawn = list[current.index];
       if (!drawn || drawn.w < 3 || drawn.h < 3) {
-        onRectChange(null);
+        // Too small to be a real watermark: drop the draft.
+        onRectsChange(list.filter((_, i) => i !== current.index));
+        onSelectedIndexChange(null);
       } else {
-        onRectChange(clampRect(drawn, videoSize));
+        replaceRect(current.index, clampRect(drawn, videoSize));
       }
-    } else if (current) {
-      onRectChange(clampRect(rectRef.current ?? ZERO_RECT, videoSize));
+    } else {
+      const target = list[current.index];
+      if (target) replaceRect(current.index, clampRect(target, videoSize));
     }
   };
 
-  const display = rect
-    ? (() => {
-        const topLeft = videoPointToElement({ x: rect.x, y: rect.y }, box, videoSize);
-        const bottomRight = videoPointToElement(
-          { x: rect.x + rect.w, y: rect.y + rect.h },
-          box,
-          videoSize,
-        );
-        return {
-          left: topLeft.x,
-          top: topLeft.y,
-          width: bottomRight.x - topLeft.x,
-          height: bottomRight.y - topLeft.y,
-        };
-      })()
-    : null;
+  const displayFor = (rect: Rect) => {
+    const topLeft = videoPointToElement({ x: rect.x, y: rect.y }, box, videoSize);
+    const bottomRight = videoPointToElement(
+      { x: rect.x + rect.w, y: rect.y + rect.h },
+      box,
+      videoSize,
+    );
+    return {
+      left: topLeft.x,
+      top: topLeft.y,
+      width: bottomRight.x - topLeft.x,
+      height: bottomRight.y - topLeft.y,
+    };
+  };
+
+  const selected =
+    selectedIndex !== null && selectedIndex >= 0 && selectedIndex < rects.length
+      ? selectedIndex
+      : null;
 
   return (
     <div>
@@ -261,31 +321,42 @@ export default function WatermarkSelector({
             selecting ? '' : 'pointer-events-none'
           }`}
           style={{ cursor: selecting ? 'crosshair' : 'default' }}
-          onPointerDown={(event) => begin(event, 'draw')}
+          onPointerDown={handleOverlayPointerDown}
           onPointerMove={move}
           onPointerUp={end}
           onPointerCancel={end}
         >
-          {display && (
-            <div
-              className="absolute border-2 border-brand-400 bg-brand-500/20"
-              style={display}
-              onPointerDown={(event) => begin(event, 'move')}
-            >
-              <span className="pointer-events-none absolute -top-7 start-0 whitespace-nowrap rounded-md bg-brand-600 px-2 py-0.5 text-[11px] font-medium text-white">
-                {Math.round(rect!.w)} × {Math.round(rect!.h)}
-              </span>
-              {HANDLES.map((handle) => (
-                <span
-                  key={handle.id}
-                  role="presentation"
-                  onPointerDown={(event) => begin(event, 'resize', handle.id)}
-                  className="absolute h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white bg-brand-600 shadow"
-                  style={{ left: handle.left, top: handle.top, cursor: 'pointer' }}
-                />
-              ))}
-            </div>
-          )}
+          {rects.map((rect, index) => {
+            const isSelected = index === selected;
+            const display = displayFor(rect);
+            return (
+              <div
+                key={index}
+                className={`absolute border-2 ${
+                  isSelected
+                    ? 'border-brand-400 bg-brand-500/20'
+                    : 'border-white/80 bg-white/10'
+                }`}
+                style={display}
+                onPointerDown={(event) => begin(event, 'move', index)}
+              >
+                <span className="pointer-events-none absolute -top-7 start-0 whitespace-nowrap rounded-md bg-brand-600 px-2 py-0.5 text-[11px] font-medium text-white">
+                  {dict.editor.preview.markLabel.replace('{n}', String(index + 1))}
+                  {isSelected ? ` · ${Math.round(rect.w)} × ${Math.round(rect.h)}` : ''}
+                </span>
+                {isSelected &&
+                  HANDLES.map((handle) => (
+                    <span
+                      key={handle.id}
+                      role="presentation"
+                      onPointerDown={(event) => begin(event, 'resize', index, handle.id)}
+                      className="absolute h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white bg-brand-600 shadow"
+                      style={{ left: handle.left, top: handle.top, cursor: 'pointer' }}
+                    />
+                  ))}
+              </div>
+            );
+          })}
         </div>
       </div>
 
@@ -293,10 +364,10 @@ export default function WatermarkSelector({
         <p className="text-ink-600">
           {selecting ? dict.editor.preview.hint : dict.editor.preview.playHint}
         </p>
-        {rect && rect.w > 0 && rect.h > 0 ? (
+        {rects.length > 0 ? (
           <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
             <CheckIcon className="h-4 w-4" />
-            {dict.editor.preview.ready}
+            {dict.editor.preview.count.replace('{count}', String(rects.length))}
           </span>
         ) : (
           <span className="text-xs text-ink-400">{dict.editor.preview.noRect}</span>
