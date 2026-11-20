@@ -2,7 +2,7 @@
 
 import type { Locale } from '@/config/site';
 import type { Dictionary } from '@/i18n/dictionaries';
-import { SAMPLE_LOAD_EVENT, SAMPLE_VIDEO_URL } from '@/lib/demo';
+import { SAMPLE_LOAD_EVENT, DEMO_HOWTO_URL } from '@/lib/demo';
 import { ArrowIcon } from '@/components/ui/Icons';
 
 interface Props {
@@ -11,10 +11,13 @@ interface Props {
 }
 
 /**
- * Interactive demo: the real sample clip playing on loop (muted autoplay),
- * the after-removal still produced by the same delogo filter the tool uses,
- * plus a button that loads the sample clip into the editor (via a window
- * event the Editor listens for) and scrolls to it.
+ * Interactive demo: the how-to clip playing on loop (muted autoplay) —
+ * a mouse cursor moves to the SAMPLE watermark, drags a selection
+ * rectangle around it and clicks, then the watermark disappears from
+ * the video. The after-removal still beside it was produced by the same
+ * delogo filter the tool uses. The button loads the sample clip into
+ * the editor (via a window event the Editor listens for) and scrolls
+ * to it.
  */
 export default function DemoSection({ locale, dict }: Props) {
   const handleTry = () => {
@@ -35,7 +38,7 @@ export default function DemoSection({ locale, dict }: Props) {
       <div className="mt-5 grid gap-4 sm:grid-cols-2">
         <figure className="overflow-hidden rounded-2xl border border-ink-200 bg-white">
           <video
-            src={SAMPLE_VIDEO_URL}
+            src={DEMO_HOWTO_URL}
             autoPlay
             muted
             loop
@@ -43,8 +46,8 @@ export default function DemoSection({ locale, dict }: Props) {
             preload="auto"
             aria-label={
               locale === 'ar'
-                ? 'الفيديو التجريبي يشتغل تلقائياً وتظهر فيه العلامة المائية SAMPLE'
-                : 'The sample video plays automatically, showing the SAMPLE watermark'
+                ? 'فيديو توضيحي يشتغل تلقائياً: الماوس يحدد العلامة المائية SAMPLE ويدوس عليها فتختفي من الفيديو'
+                : 'How-to video playing automatically: the mouse selects the SAMPLE watermark and clicks it, and the watermark disappears from the video'
             }
             className="aspect-video w-full object-cover"
           />
