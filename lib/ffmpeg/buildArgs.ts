@@ -9,8 +9,8 @@ export interface DelogoOptions {
   /** Intrinsic video dimensions, used for clamping. */
   videoWidth: number;
   videoHeight: number;
-  /** Rectangle in intrinsic video pixels. */
-  rect: Rect;
+  /** Rectangles in intrinsic video pixels — one per watermark. */
+  rects: Rect[];
   /** Start of the enabled time window, in seconds. */
   startTime: number;
   /** End of the enabled time window, in seconds. */
@@ -51,8 +51,9 @@ export function normalizeDelogoRect(rect: Rect, videoWidth: number, videoHeight:
 
 /**
  * Build the ffmpeg command as an argument ARRAY — never a shell string.
- * Example output:
- *   ["-i","input.mp4","-vf","delogo=x=10:y=20:w=100:h=40:enable='between(t,0,5)':show=0",
+ * Every rectangle becomes its own delogo filter, chained with commas so
+ * one pass removes all watermarks at once:
+ *   ["-i","input.mp4","-vf","delogo=x=10:y=20:w=100:h=40:enable='between(t,0,5)':show=0,delogo=x=300:y=400:w=80:h=30:enable='between(t,0,5)':show=0",
  *    "-c:v","libx264","-preset","ultrafast","-crf","23","-c:a","copy",
  *    "-movflags","+faststart","output.mp4"]
  *
@@ -69,24 +70,31 @@ export function buildDelogoArgs(options: DelogoOptions): string[] {
     outputName,
     videoWidth,
     videoHeight,
-    rect,
+    rects,
     startTime,
     endTime,
   } = options;
 
-  const safe = normalizeDelogoRect(rect, videoWidth, videoHeight);
+  if (!rects || rects.length === 0) {
+    throw new Error('buildDelogoArgs requires at least one rectangle');
+  }
 
   const start = formatSeconds(startTime);
   const end = formatSeconds(Math.max(startTime, endTime));
 
-  const filter = [
-    `delogo=x=${safe.x}`,
-    `y=${safe.y}`,
-    `w=${safe.w}`,
-    `h=${safe.h}`,
-    `enable='between(t,${start},${end})'`,
-    'show=0',
-  ].join(':');
+  const filter = rects
+    .map((rect) => {
+      const safe = normalizeDelogoRect(rect, videoWidth, videoHeight);
+      return [
+        `delogo=x=${safe.x}`,
+        `y=${safe.y}`,
+        `w=${safe.w}`,
+        `h=${safe.h}`,
+        `enable='between(t,${start},${end})'`,
+        'show=0',
+      ].join(':');
+    })
+    .join(',');
 
   return [
     '-i',
