@@ -49,7 +49,8 @@ export default function Editor({ dict }: Props) {
   const [file, setFile] = useState<File | null>(null);
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
   const [meta, setMeta] = useState<VideoMeta | null>(null);
-  const [rect, setRect] = useState<Rect | null>(null);
+  const [rects, setRects] = useState<Rect[]>([]);
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [start, setStart] = useState(0);
   const [end, setEnd] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
@@ -121,7 +122,8 @@ export default function Editor({ dict }: Props) {
     setFile(next);
     setVideoUrl(url);
     setMeta(null);
-    setRect(null);
+    setRects([]);
+    setSelectedIndex(null);
     setStart(0);
     setEnd(0);
     setCurrentTime(0);
@@ -189,7 +191,8 @@ export default function Editor({ dict }: Props) {
     setStart(0);
     setEnd(duration);
     if (pendingSampleRect.current) {
-      setRect(pendingSampleRect.current);
+      setRects([pendingSampleRect.current]);
+      setSelectedIndex(0);
       pendingSampleRect.current = null;
       // The sample clip starts playing by itself so the visitor sees it
       // moving right away (muted autoplay is what browsers allow).
@@ -220,7 +223,8 @@ export default function Editor({ dict }: Props) {
   const handleProcess = () => {
     if (!file || !meta) return;
 
-    if (!rect || rect.w < 2 || rect.h < 2) {
+    const validRects = rects.filter((rect) => rect.w >= 2 && rect.h >= 2);
+    if (validRects.length === 0) {
       setErrorCode('noRect');
       setStatus('error');
       return;
@@ -244,7 +248,7 @@ export default function Editor({ dict }: Props) {
       outputName: 'output.mp4',
       videoWidth: meta.width,
       videoHeight: meta.height,
-      rect,
+      rects: validRects,
       startTime: safeStart,
       endTime: safeEnd,
     });
@@ -331,17 +335,27 @@ export default function Editor({ dict }: Props) {
     setVideoUrl(null);
     setResultUrl(null);
     setMeta(null);
-    setRect(null);
+    setRects([]);
+    setSelectedIndex(null);
     setStatus('idle');
     setProgress(0);
     setLogs([]);
     setErrorCode(null);
   };
 
+  const removeRect = (index: number) => {
+    setRects((previous) => previous.filter((_, i) => i !== index));
+    setSelectedIndex((previous) => {
+      if (previous === null) return null;
+      if (previous === index) return null;
+      return previous > index ? previous - 1 : previous;
+    });
+  };
+
   const largeFile = file ? isLargeFile(file) : false;
   const canProcess =
     status === 'ready' &&
-    Boolean(meta && rect && rect.w >= 2 && rect.h >= 2) &&
+    rects.some((rect) => rect.w >= 2 && rect.h >= 2) &&
     (!largeFile || ackLarge);
 
   return (
@@ -471,8 +485,10 @@ export default function Editor({ dict }: Props) {
                   ? { width: meta.width, height: meta.height }
                   : { width: 16, height: 9 }
               }
-              rect={rect}
-              onRectChange={setRect}
+              rects={rects}
+              onRectsChange={setRects}
+              selectedIndex={selectedIndex}
+              onSelectedIndexChange={setSelectedIndex}
               videoRef={videoRef}
               onTimeUpdate={setCurrentTime}
               onMetadata={handleMetadata}
@@ -484,23 +500,52 @@ export default function Editor({ dict }: Props) {
             <div className="grid gap-4 rounded-2xl border border-ink-200 bg-ink-50 p-4 sm:grid-cols-2">
               <div>
                 <p className="mb-1.5 text-xs font-semibold text-ink-700">{dict.editor.preview.rectLabel}</p>
-                {rect ? (
-                  <div className="flex flex-wrap gap-2 text-xs text-ink-800">
-                    <span>{dict.editor.preview.x}: {Math.round(rect.x)}</span>
-                    <span>{dict.editor.preview.y}: {Math.round(rect.y)}</span>
-                    <span>{dict.editor.preview.w}: {Math.round(rect.w)}</span>
-                    <span>{dict.editor.preview.h}: {Math.round(rect.h)}</span>
+                {rects.length > 0 ? (
+                  <div className="space-y-1.5">
+                    {rects.map((rect, index) => (
+                      <div
+                        key={index}
+                        className={`flex flex-wrap items-center gap-2 rounded-lg border px-2 py-1.5 text-xs text-ink-800 ${
+                          index === selectedIndex
+                            ? 'border-brand-400 bg-brand-50'
+                            : 'border-ink-200 bg-white'
+                        }`}
+                      >
+                        <button
+                          type="button"
+                          onClick={() => setSelectedIndex(index)}
+                          className="flex flex-wrap gap-2 text-start font-semibold"
+                        >
+                          <span>{dict.editor.preview.markLabel.replace('{n}', String(index + 1))}</span>
+                          <span>{dict.editor.preview.x}: {Math.round(rect.x)}</span>
+                          <span>{dict.editor.preview.y}: {Math.round(rect.y)}</span>
+                          <span>{dict.editor.preview.w}: {Math.round(rect.w)}</span>
+                          <span>{dict.editor.preview.h}: {Math.round(rect.h)}</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => removeRect(index)}
+                          className="ms-auto inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-xs font-semibold text-red-700 hover:bg-red-50"
+                        >
+                          <CloseIcon className="h-3.5 w-3.5" />
+                          {dict.editor.preview.deleteMark}
+                        </button>
+                      </div>
+                    ))}
                   </div>
                 ) : (
                   <p className="text-xs text-ink-400">{dict.editor.preview.noRect}</p>
                 )}
-                {rect && (
+                {rects.length > 0 && (
                   <button
                     type="button"
-                    onClick={() => setRect(null)}
+                    onClick={() => {
+                      setRects([]);
+                      setSelectedIndex(null);
+                    }}
                     className="mt-2 text-xs font-semibold text-brand-700 underline underline-offset-2"
                   >
-                    {dict.editor.preview.clear}
+                    {dict.editor.preview.clearAll}
                   </button>
                 )}
               </div>
