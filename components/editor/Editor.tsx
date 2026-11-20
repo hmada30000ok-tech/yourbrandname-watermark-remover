@@ -5,6 +5,12 @@ import type { Locale } from '@/config/site';
 import type { Dictionary } from '@/i18n/dictionaries';
 import { ACCEPT_ATTRIBUTE } from '@/config/app';
 import {
+  SAMPLE_LOAD_EVENT,
+  SAMPLE_RECT,
+  SAMPLE_VIDEO_FILE_NAME,
+  SAMPLE_VIDEO_URL,
+} from '@/lib/demo';
+import {
   buildDelogoArgs,
   inputNameFor,
 } from '@/lib/ffmpeg/buildArgs';
@@ -56,6 +62,12 @@ export default function Editor({ dict }: Props) {
   const [ackLarge, setAckLarge] = useState(false);
   const [dragging, setDragging] = useState(false);
   const [supportsSAB, setSupportsSAB] = useState(false);
+  const [sampleLoading, setSampleLoading] = useState(false);
+  const [sampleFailed, setSampleFailed] = useState(false);
+
+  // When the sample clip loads, its watermark sits at a known position, so
+  // the editor pre-draws the selection rectangle for it once metadata arrives.
+  const pendingSampleRect = useRef<Rect | null>(null);
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const workerRef = useRef<Worker | null>(null);
@@ -132,10 +144,54 @@ export default function Editor({ dict }: Props) {
     selectFile(event.dataTransfer.files?.[0] ?? null);
   };
 
+  /**
+   * Load the built-in sample clip (public/videos/sample-watermark.mp4) into
+   * the editor, with its watermark rectangle pre-drawn. The homepage demo
+   * section triggers this through the SAMPLE_LOAD_EVENT window event.
+   */
+  const loadSample = async () => {
+    if (sampleLoading) return;
+    setSampleLoading(true);
+    setSampleFailed(false);
+    try {
+      const response = await fetch(SAMPLE_VIDEO_URL);
+      if (!response.ok) throw new Error('sample fetch failed');
+      const blob = await response.blob();
+      const sampleFile = new File([blob], SAMPLE_VIDEO_FILE_NAME, { type: 'video/mp4' });
+      const error = validateFile(sampleFile);
+      if (error) {
+        setValidationError(error);
+        return;
+      }
+      pendingSampleRect.current = SAMPLE_RECT;
+      selectFile(sampleFile);
+    } catch {
+      setSampleFailed(true);
+    } finally {
+      setSampleLoading(false);
+    }
+  };
+
+  // Keep the latest loadSample in a ref so the window listener never goes stale.
+  const loadSampleRef = useRef(loadSample);
+  loadSampleRef.current = loadSample;
+
+  useEffect(() => {
+    const handler = () => {
+      void loadSampleRef.current();
+    };
+    window.addEventListener(SAMPLE_LOAD_EVENT, handler);
+    return () => window.removeEventListener(SAMPLE_LOAD_EVENT, handler);
+  }, []);
+
   const handleMetadata = (size: Size, duration: number) => {
     setMeta({ width: size.width, height: size.height, duration });
     setStart(0);
     setEnd(duration);
+    if (pendingSampleRect.current) {
+      setRect(pendingSampleRect.current);
+      pendingSampleRect.current = null;
+    }
   };
 
   const clampTime = (value: number): number => {
@@ -326,9 +382,34 @@ export default function Editor({ dict }: Props) {
             {dict.editor.drop.browse}
           </label>
 
-          <p className="mt-5 text-xs text-ink-500">
-            {dict.editor.drop.accepted} · {dict.editor.drop.maxSize}
-          </p>
+          <div className="mt-5 flex flex-wrap items-center justify-center gap-2">
+            {dict.editor.drop.badges.map((badge) => (
+              <span
+                key={badge}
+                className="rounded-full border border-ink-200 bg-ink-50 px-3 py-1 text-xs font-semibold text-ink-700"
+              >
+                {badge}
+              </span>
+            ))}
+          </div>
+
+          <div className="mx-auto mt-6 max-w-md border-t border-ink-100 pt-5">
+            <p className="text-sm leading-6 text-ink-600">{dict.editor.demo.hint}</p>
+            <button
+              type="button"
+              onClick={() => void loadSample()}
+              disabled={sampleLoading}
+              className="mt-3 inline-flex items-center gap-2 rounded-xl border border-brand-300 bg-brand-50 px-5 py-2.5 text-sm font-bold text-brand-700 transition hover:bg-brand-100 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              <UploadIcon className="h-4 w-4" />
+              {sampleLoading ? dict.editor.demo.loading : dict.editor.demo.trySample}
+            </button>
+            {sampleFailed && (
+              <p className="mt-2 text-xs font-semibold text-red-700">
+                {dict.editor.demo.loadError}
+              </p>
+            )}
+          </div>
         </div>
       ) : (
         <div className="space-y-5">
