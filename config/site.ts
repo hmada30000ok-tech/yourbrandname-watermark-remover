@@ -13,8 +13,8 @@
 /** PLACEHOLDER: replace with your real brand name. */
 export const SITE_NAME = '[YourBrandName]';
 
-/** PLACEHOLDER: replace with your real domain (no trailing slash). */
-export const SITE_URL = 'https://example.com';
+/** Live production domain on Railway. */
+export const SITE_URL = 'https://yourbrandname-watermark-remover-production.up.railway.app';
 
 /** PLACEHOLDER: replace with your real contact email. */
 export const CONTACT_EMAIL = 'you@example.com';

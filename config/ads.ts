@@ -4,7 +4,7 @@
  * (looks like ca-pub-1234567890123456) before enabling any slot.
  * ---------------------------------------------------------------------------
  */
-export const ADSENSE_CLIENT_ID = 'ca-pub-0000000000000000';
+export const ADSENSE_CLIENT_ID = 'ca-pub-4633137837175260';
 
 export type AdSlotId = 'header' | 'sidebar' | 'inContent';
 
@@ -31,21 +31,21 @@ export const AD_SLOTS: Record<AdSlotId, AdSlotConfig> = {
   header: {
     enabled: true,
     clientId: ADSENSE_CLIENT_ID,
-    slotId: '0000000001', // PLACEHOLDER: your real ad unit ID
+    slotId: '7590922154', // header ad unit
     format: 'horizontal',
     labelKey: 'header',
   },
   sidebar: {
     enabled: true,
     clientId: ADSENSE_CLIENT_ID,
-    slotId: '0000000002', // PLACEHOLDER: your real ad unit ID
+    slotId: '9660224282', // sidebar ad unit
     format: 'rectangle',
     labelKey: 'sidebar',
   },
   inContent: {
     enabled: true,
     clientId: ADSENSE_CLIENT_ID,
-    slotId: '0000000003', // PLACEHOLDER: your real ad unit ID
+    slotId: '1895295234', // in-content ad unit
     format: 'fluid',
     labelKey: 'content',
   },
