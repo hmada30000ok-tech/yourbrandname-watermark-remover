@@ -30,9 +30,7 @@ export default function Header({ locale, page, dict }: Props) {
           href={localizedPath('home', locale)}
           className="flex items-center gap-2 rounded-lg text-ink-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-500"
         >
-          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-600 text-white">
-            <LogoMark className="h-6 w-6" />
-          </span>
+          <LogoMark className="h-9 w-9 shrink-0" />
           <span className="text-base font-extrabold tracking-tight sm:text-lg">{SITE_NAME}</span>
         </a>
 
