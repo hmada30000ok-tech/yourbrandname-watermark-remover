@@ -4,7 +4,7 @@
  */
 
 /** Hard maximum upload size in megabytes. */
-export const MAX_FILE_SIZE_MB = 150;
+export const MAX_FILE_SIZE_MB = 400;
 
 /** Above this size we show an explicit "may be slow on mobile" warning. */
 export const LARGE_FILE_WARNING_MB = 100;
