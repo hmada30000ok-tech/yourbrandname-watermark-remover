@@ -1,4 +1,5 @@
 import type { SVGProps } from 'react';
+import { useId } from 'react';
 
 type IconProps = SVGProps<SVGSVGElement>;
 
@@ -20,14 +21,37 @@ function Base({ children, ...props }: IconProps) {
   );
 }
 
+/**
+ * Unmark brand mark: a bold white "U" with a play triangle inside it
+ * (video), a sparkle at the top-right (the watermark, erased), on a
+ * rounded square in the brand-blue gradient. Used in the header, the
+ * footer and as the site favicon (public/logo.svg / favicon.svg).
+ */
 export function LogoMark(props: IconProps) {
+  const gradId = useId();
   return (
-    <Base {...props}>
-      <rect x="3" y="4" width="18" height="16" rx="3" />
-      <path d="M8 9h5a2 2 0 0 1 0 4H8V9Z" />
-      <path d="M8 13v2" />
-      <path d="m16 9 3-2v10l-3-2" />
-    </Base>
+    <svg viewBox="0 0 64 64" role="img" aria-label="Unmark" {...props}>
+      <defs>
+        <linearGradient id={gradId} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#338bfa" />
+          <stop offset="0.55" stopColor="#1d6fe1" />
+          <stop offset="1" stopColor="#1758ba" />
+        </linearGradient>
+      </defs>
+      <rect x="2" y="2" width="60" height="60" rx="15" fill={`url(#${gradId})`} />
+      <path
+        d="M21 15v15a11 11 0 0 0 22 0V15"
+        fill="none"
+        stroke="#ffffff"
+        strokeWidth="7.5"
+        strokeLinecap="round"
+      />
+      <path d="M28.5 28 39 33.5 28.5 39Z" fill="#ffffff" />
+      <path
+        d="M52 6l2.2 4.8L59 13l-4.8 2.2L52 20l-2.2-4.8L45 13l4.8-2.2Z"
+        fill="#ffffff"
+      />
+    </svg>
   );
 }
 
