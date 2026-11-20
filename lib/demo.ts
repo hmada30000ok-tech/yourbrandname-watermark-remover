@@ -15,5 +15,13 @@ export const SAMPLE_VIDEO_DURATION_SECONDS = 6;
 /** The watermark box drawn into the sample clip (top-right corner). */
 export const SAMPLE_RECT: Rect = { x: 480, y: 16, w: 144, h: 36 };
 
+/**
+ * Homepage "how it works" demo: the same Times Square footage, but the
+ * video itself shows a mouse cursor moving to the SAMPLE watermark,
+ * dragging a selection rectangle around it and clicking — then the
+ * watermark disappears from the video (delogo). 9 seconds, 640x360.
+ */
+export const DEMO_HOWTO_URL = '/videos/demo-howto.mp4';
+
 /** Window event the homepage demo button dispatches to load the sample into the editor. */
 export const SAMPLE_LOAD_EVENT = 'unmark:load-sample';
