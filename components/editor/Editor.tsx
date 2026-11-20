@@ -370,10 +370,19 @@ export default function Editor({ dict }: Props) {
             />
           </div>
 
-          {meta && (
+          {/* Render the selector as soon as a file is chosen. It used to
+              wait for `meta`, but `meta` only comes from this selector's
+              own <video> onLoadedMetadata, so the preview could never
+              appear and "Start processing" stayed disabled. Until the
+              metadata loads we use a 16:9 fallback for the aspect ratio. */}
+          {videoUrl && (
             <WatermarkSelector
               videoUrl={videoUrl}
-              videoSize={{ width: meta.width, height: meta.height }}
+              videoSize={
+                meta
+                  ? { width: meta.width, height: meta.height }
+                  : { width: 16, height: 9 }
+              }
               rect={rect}
               onRectChange={setRect}
               videoRef={videoRef}
